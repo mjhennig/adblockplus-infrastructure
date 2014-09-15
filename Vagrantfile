@@ -1,76 +1,57 @@
 VAGRANTFILE_API_VERSION = "2"
+require 'yaml'
 
 def define_standard_vm(config, host_name, ip)
   config.vm.define host_name do |config|
+
     config.vm.box = 'precise64'
     config.vm.box_url = 'http://cloud-images.ubuntu.com/vagrant/precise/current/precise-server-cloudimg-amd64-vagrant-disk1.box'
     config.vm.host_name = "#{host_name}.adblockplus.org"
     config.vm.network :private_network, ip: ip
     config.vm.provider :virtualbox do |vb|
+
       vb.customize ["modifyvm", :id, "--cpus", 1]
 
       # Work around https://www.virtualbox.org/ticket/11649
       vb.customize ['modifyvm', :id, '--natdnshostresolver1', 'on']
+
+      setup_path = File.join(Dir.pwd, "hiera", "nodes", "#{host_name}.yaml")
+      setup = YAML.load_file(setup_path) rescue {}
+
+      requirements = setup["requirements"] || {}
+      requirements.each do |key, value|
+        vb.customize ['modifyvm', :id, "--#{key}", "#{value}"]
+      end
+
     end
 
-    config.vm.provision :shell, :inline => '
-if ! test -f /usr/bin/puppet; then
-  sudo apt-get update && sudo apt-get install -y puppet
-fi'
-
-    manifest_files = ['vagrant.pp', 'nodes.pp']
-    manifest_files.each do |manifest_file|
-      config.vm.provision :puppet do |puppet|
-        puppet.options = ['--environment=development']
-        puppet.manifests_path = 'manifests'
-        puppet.manifest_file = manifest_file
-        puppet.module_path = 'modules'
-      end
+    config.vm.provision :shell, :path => 'hiera/files/precise.sh'
+    config.vm.provision :puppet do |puppet|
+      puppet.options = [
+        '--environment=development',
+        '--external_nodes=/usr/local/bin/puppet-node-classifier',
+        '--node_terminus=exec',
+        '--verbose',
+        '--debug',
+      ]
+      puppet.manifests_path = 'manifests'
+      puppet.manifest_file = 'nodes.pp'
+      puppet.module_path = 'modules'
+      # Requires Puppet 3.x or later
+      #puppet.hiera_config_path = 'hiera/vagrant.yaml'
     end
 
     yield(config) if block_given?
+
   end
 end
 
+
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
-  define_standard_vm config, 'server4', '10.8.0.99'
-  define_standard_vm config, 'server5', '10.8.0.100'
-  define_standard_vm config, 'server6', '10.8.0.101'
-  define_standard_vm config, 'server7', '10.8.0.102'
-  define_standard_vm config, 'server10', '10.8.0.105' do |config|
-    config.vm.provider :virtualbox do |vb|
-      vb.customize ["modifyvm", :id, "--memory", 1024]
-    end
+  configYAML = File.join(Dir.pwd, "hiera/environments/development/hosts.yaml")
+  configServers = YAML.load_file(configYAML)
+  servers = configServers["servers"]
+  servers.each do |server, items|
+    define_standard_vm(config, server, items["ip"][0])
   end
-  define_standard_vm config, 'server11', '10.8.0.106'
-  define_standard_vm config, 'server12', '10.8.0.107'
-  define_standard_vm config, 'server15', '10.8.0.110'
-  define_standard_vm config, 'server19', '10.8.0.114'
-  define_standard_vm config, 'notification1', '10.8.0.118'
-  define_standard_vm config, 'notification2', '10.8.0.119'
-  define_standard_vm config, 'filter1', '10.8.0.120'
-  define_standard_vm config, 'filter2', '10.8.0.121'
-  define_standard_vm config, 'filter3', '10.8.0.122'
-  define_standard_vm config, 'filter4', '10.8.0.123'
-  define_standard_vm config, 'filter5', '10.8.0.124'
-  define_standard_vm config, 'filter6', '10.8.0.125'
-  define_standard_vm config, 'download1', '10.8.0.126'
-  define_standard_vm config, 'filtermaster1', '10.8.0.127'
-  define_standard_vm config, 'update1', '10.8.0.128'
-  define_standard_vm config, 'web1', '10.8.0.129'
-  define_standard_vm config, 'stats1', '10.8.0.130'
-  define_standard_vm config, 'issues1', '10.8.0.131'
-  define_standard_vm config, 'codereview1', '10.8.0.132'
-  define_standard_vm config, 'filter7', '10.8.0.133'
-  define_standard_vm config, 'filter8', '10.8.0.134'
-  define_standard_vm config, 'filter9', '10.8.0.135'
-  define_standard_vm config, 'filter10', '10.8.0.136'
-  define_standard_vm config, 'filter11', '10.8.0.137'
-  define_standard_vm config, 'filter12', '10.8.0.138'
-  define_standard_vm config, 'filter13', '10.8.0.139'
-  define_standard_vm config, 'filter14', '10.8.0.140'
-  define_standard_vm config, 'filter15', '10.8.0.141'
-  define_standard_vm config, 'filter16', '10.8.0.142'
-  define_standard_vm config, 'filter17', '10.8.0.143'
-  define_standard_vm config, 'filter18', '10.8.0.144'
 end

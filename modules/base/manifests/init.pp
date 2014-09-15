@@ -39,4 +39,23 @@ class base {
   class {'logrotate':
     stage => 'post'
   }
+
+  $servers = hiera("servers")
+  create_resources(base::explicit_host_record, $servers)
+
+  define explicit_host_record($ip, $ssh_public_key=undef){
+    host{"$name,$ip":
+      ensure => present,
+      ip => $ip,
+      name => "$name.adblockplus.org",
+    }
+
+    if $ssh_public_key != undef {
+      @sshkey{$name:
+        key => $ssh_public_key,
+        type => ssh-rsa,
+      }
+    }
+  }
 }
+

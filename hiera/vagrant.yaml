@@ -1,0 +1,11 @@
+---
+:backends:
+  - yaml
+:yaml:
+  :datadir: /vagrant/hiera
+:hierarchy:
+  - "environments/development/base"
+  - "environments/development/hosts"
+  - "nodes/%{::hostname}"
+  - common
+

@@ -1,5 +1,5 @@
 node 'web1' {
-  include base, statsclient
+  include statsclient
 
   class {'web::server':
     vhost => 'eyeo.com',
@@ -21,9 +21,5 @@ node 'web1' {
 mailer=/usr/sbin/sendmail
 [formmail]
 template=formmail/template/eyeo.mail',
-  }
-
-  class {'nagios::client':
-    server_address => 'monitoring.adblockplus.org'
   }
 }
