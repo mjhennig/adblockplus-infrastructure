@@ -43,7 +43,7 @@ class base {
   $servers = hiera("servers")
   create_resources(base::explicit_host_record, $servers)
 
-  define explicit_host_record($ip, $ssh_public_key=undef){
+  define explicit_host_record($ip, $ssh_public_key=undef, $role=undef){
     host{"$name,$ip":
       ensure => present,
       ip => $ip,

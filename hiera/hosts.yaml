@@ -1,51 +1,30 @@
 ---
 servers:
-  hgserver:
-    ip:
-      - 10.8.0.145 
-    ssh_public_key: notyet
   filter1:
-    ip:
-      - 10.8.0.120
-      - 2a01:4f8:100:81a4::2
+    ip: [10.8.0.120, '2a01:4f8:100:81a4::2']
     ssh_public_key: AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBAUhHiFdqQBATyyOE9XPR7v2+bghp3r1QY0O62d/klV7yhAOBKQuI6MtTu43cYQE60M10OzVfeeMfmc0dPP97UM=
   server4:
-    ip:
-      - 10.8.0.99
-    ssh_public_key: notyet
+    ip: [10.8.0.99]
   codereview1:
-    ip:
-      - 10.8.0.132
-    ssh_public_key: notyet
+    ip: [10.8.0.132]
+    role: codereviewserver
   download1:
-    ip:
-      - 10.8.0.126
-      - 2a01:4f8:121:434c::2
+    ip: [10.8.0.126, '2a01:4f8:121:434c::2']
     ssh_public_key: AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBE9gWnTMFJkJ6DqrmnmQvOHyK/yaWvz6SKPetMX/A6avRLm4AzinvD+F7z4mIqRbJxhJgRljOxZWVgWCOQEWYaY=
   filtermaster1:
-    ip:
-      - 10.8.0.127
-    ssh_public_key: notyet
+    ip: [10.8.0.127]
   server10:
-    ip:
-      - 10.8.0.105
-      - 2a01:4f8:d16:443::2
+    ip: [10.8.0.105, '2a01:4f8:d16:443::2']
+    role: intraforumserver
     ssh_public_key: AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBPoK6neBTjJIzWn6xhJozABPJoZ7809RmSOgBHKgbSMztjJD839Vbi263An4YgAhYijclPDX78zxjO0XgvW1aMc=
   issues1:
-    ip:
-      - 10.8.0.131
-    ssh_public_key: notyet
+    ip: [10.8.0.131]
   stats1:
-    ip:
-      - 10.8.0.130
-    ssh_public_key: notyet
+    ip: [10.8.0.130]
   update1:
-    ip:
-      - 10.8.0.128
-      - 2a01:4f8:a0:2088::2
+    ip: [10.8.0.128, '2a01:4f8:a0:2088::2']
     ssh_public_key: AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBNQ4C/hghKhYSQHiz3cquPVbbMP5tycwHChe5gbY03jVR9dynO6Ldb5MWL02r83zFisPqM6lvtnjuGA65dzVJYE=
   web1:
-    ip:
-      - 10.8.0.129
-      - 2a01:4f8:120:2327::2
+    ip: [10.8.0.129, '2a01:4f8:120:2327::2']
     ssh_public_key: AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBMu0mGhPAhIbAv7H0iN74h6fC9H2576AxI9cXFj3FAQxHl2ItLIibrViThm0luOJiRIaLc1GxavBKK0dR4bzFR8=
+

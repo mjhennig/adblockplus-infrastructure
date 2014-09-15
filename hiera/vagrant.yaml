@@ -4,8 +4,9 @@
 :yaml:
   :datadir: /vagrant/hiera
 :hierarchy:
+  - "hosts/%{::hostname}"
+  - "roles/%{::role}"
   - "environments/development/base"
-  - "environments/development/hosts"
-  - "nodes/%{::hostname}"
+  - "hosts"
   - common
 

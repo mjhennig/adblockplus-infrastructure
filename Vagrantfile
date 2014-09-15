@@ -1,7 +1,7 @@
 VAGRANTFILE_API_VERSION = "2"
 require 'yaml'
 
-def define_standard_vm(config, host_name, ip)
+def define_standard_vm(config, host_name, ip, role=nil)
   config.vm.define host_name do |config|
 
     config.vm.box = 'precise64'
@@ -15,17 +15,22 @@ def define_standard_vm(config, host_name, ip)
       # Work around https://www.virtualbox.org/ticket/11649
       vb.customize ['modifyvm', :id, '--natdnshostresolver1', 'on']
 
-      setup_path = File.join(Dir.pwd, "hiera", "nodes", "#{host_name}.yaml")
-      setup = YAML.load_file(setup_path) rescue {}
+      if role == nil
+        setup_path = File.join(Dir.pwd, "hiera", "hosts", "#{host_name}.yaml")
+      else
+        setup_path = File.join(Dir.pwd, "hiera", "roles", "#{role}.yaml")
+      end
 
-      requirements = setup["requirements"] || {}
+      setup = YAML.load_file(setup_path) rescue {}
+      requirements = setup.fetch("requirements", {})
+
       requirements.each do |key, value|
         vb.customize ['modifyvm', :id, "--#{key}", "#{value}"]
       end
 
     end
 
-    config.vm.provision :shell, :path => 'hiera/files/precise.sh'
+    config.vm.provision :shell, :path => 'hiera/files/install-precise.sh'
     config.vm.provision :puppet do |puppet|
       puppet.options = [
         '--environment=development',
@@ -46,12 +51,13 @@ def define_standard_vm(config, host_name, ip)
   end
 end
 
-
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
-  configYAML = File.join(Dir.pwd, "hiera/environments/development/hosts.yaml")
+  configYAML = File.join(Dir.pwd, "hiera/hosts.yaml")
   configServers = YAML.load_file(configYAML)
   servers = configServers["servers"]
   servers.each do |server, items|
-    define_standard_vm(config, server, items["ip"][0])
+    ip = items["ip"][0]
+    role = items.fetch("role", "default")
+    define_standard_vm(config, server, ip, role)
   end
 end

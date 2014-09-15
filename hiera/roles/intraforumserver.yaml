@@ -6,6 +6,6 @@ classes:
     private_key: "intraforum.adblockplus.org_sslcert.key"
     is_default: true
 
-virtualbox:
+requirements:
   memory: 1024
-  
+
