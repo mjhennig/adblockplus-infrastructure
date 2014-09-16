@@ -34,7 +34,7 @@ def define_standard_vm(config, host_name, ip, role=nil)
     config.vm.provision :puppet do |puppet|
       puppet.options = [
         '--environment=development',
-        '--external_nodes=/usr/local/bin/puppet-node-classifier',
+        '--external_nodes=/vagrant/hiera/files/puppet-node-classifier.rb',
         '--node_terminus=exec',
         '--verbose',
         '--debug',

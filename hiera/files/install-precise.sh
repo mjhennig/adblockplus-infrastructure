@@ -29,10 +29,3 @@ fi
 if [ ! -e /etc/puppet/hosts.yaml ]; then
   sudo ln -fs /vagrant/hiera/hosts.yaml /etc/puppet/hosts.yaml
 fi
-
-# Install the puppet node classifier, if absent:
-if [ ! -e /usr/local/bin/puppet-node-classifier ]; then
-  sudo ln -fs \
-    /vagrant/hiera/files/puppet-node-classifier.rb \
-    /usr/local/bin/puppet-node-classifier
-fi
