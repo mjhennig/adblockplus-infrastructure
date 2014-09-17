@@ -8,12 +8,16 @@ if [ ! -e /usr/bin/puppet -o ! -e /usr/bin/hiera ]; then
 # Puppetlabs packages (e.g. hiera) would attempt to install a puppet 3.x
 # or later release (which is not available in precise) if not pinned here
 Package: puppet
-Pin: release v=2.7.*
-Pin-Priority: 666
+Pin: version 2.7.*
+Pin-Priority: 1000
 
 Package: puppet-common
-Pin: release v=2.7.*
-Pin-Priority: 666
+Pin: version 2.7.*
+Pin-Priority: 1000
+
+Package: facter
+Pin: version 1.6.*
+Pin-Priority: 1000
 ' | sudo tee /etc/apt/preferences.d/puppetlabs \
   && sudo apt-get -y update \
   && sudo apt-get -y install puppet \
